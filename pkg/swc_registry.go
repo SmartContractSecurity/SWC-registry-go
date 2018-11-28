@@ -51,6 +51,49 @@ func GetRegistry() *Registry {
 	return registryInstance
 }
 
+// GetSWC returns an SWC entry based on the given SWC ID. If update=true, the most recent SWC file is fetched from the URL at DefaultGithubURL.
+func GetSWC(swcID string, update bool) (SWC, error) {
+    var swc SWC
+    r := GetRegistry()
+    if update {
+        err := r.UpdateRegistryFromURL()
+        if err != nil {
+            return swc, err
+        }
+    }
+    swc, present := r.data[swcID]
+    if !present {
+        return swc, errors.New("No SWC found matching the given ID")
+    }
+
+    return swc, nil
+}
+
+// GetTitle returns the SWC title.
+func (s *SWC) GetTitle() string {
+    return s.Description.Content.Title
+}
+
+// GetRemediation returns the SWC's remediation text.
+func (s *SWC) GetRemediation() string {
+    return s.Description.Content.Remediation
+}
+
+// GetDescription returns the SWC's full-text description.
+func (s *SWC) GetDescription() string {
+    return s.Description.Content.Description
+}
+
+// GetRelationships returns the SWC's equivalent CWE entry formatted as a Markdown link.
+func (s *SWC) GetRelationships() string {
+    return s.Description.Content.Relationships
+}
+
+// GetMarkdown returns a summary of the SWC in Markdown formatting.
+func (s *SWC) GetMarkdown() string {
+    return s.Description.Markdown
+}
+
 func (r *Registry) parseAndUpdate(inputBytes []byte) error {
 	var parsedRegistry map[string]Description
 	json.Unmarshal(inputBytes, &parsedRegistry)
