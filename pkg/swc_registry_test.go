@@ -86,6 +86,7 @@ func TestUpdateRegistryFromURL(t *testing.T) {
     if err == nil {
         t.Errorf("Expected error fotr invalid JSON at valid URL not thrown")
     }
+
     // check that previous SWC keys are still there
 	keyNumber = len(r.data)
 	if keyNumber != 29 {

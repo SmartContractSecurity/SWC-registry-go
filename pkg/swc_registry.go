@@ -36,6 +36,9 @@ type Registry struct {
 // DefaultGithubURL is the default repository URL used for online-loading. It points to the SWC definition JSON.
 var DefaultGithubURL = "https://raw.githubusercontent.com/SmartContractSecurity/SWC-registry/master/export/swc-definition.json"
 
+// DefaultFilePath is the default local filesystem path taken when loading from a file.
+var DefaultFilePath = "swc-definition.json"
+
 var registryInstance *Registry
 var once sync.Once
 
@@ -70,7 +73,7 @@ func (r *Registry) UpdateRegistryFromFile(paths ...string) error {
 		filePath = paths[0]
 	} else {
 		// use local JSON file as default
-		filePath = "swc-definition.json"
+		filePath = DefaultFilePath
 	}
 	jsonBytes, err := ioutil.ReadFile(filePath)
 	if err != nil {
