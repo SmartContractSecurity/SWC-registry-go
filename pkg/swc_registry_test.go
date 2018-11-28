@@ -174,6 +174,34 @@ func TestSWC(t *testing.T) {
         t.Error("Expected error for an invalid SWC ID was not thrown.")
     }
 
+    // get an SWC entry on an uninitialized SWC registry (and provoke an online update)
+    registryInstance.data = make(map[string]SWC)
+    swc, err = GetSWC("SWC-101", false)
+    if err != nil {
+        t.Fatalf("Unexpected error while creating SWC-101: %s", err)
+    }
+
+    testMarkdown = swc.GetMarkdown()
+    if testMarkdown != swc101Markdown {
+        t.Errorf("Encountered invalid Markdown for SWC-101. Expected:\n%s \n...but got:\n%s\n", swc101Markdown, testMarkdown)
+    }
+    testTitle = swc.GetTitle()
+    if testTitle != swc101Title {
+        t.Errorf("Encountered invalid description for SWC-101. Expected:\n%s \n...but got:\n%s\n", swc101Title, testTitle)
+    }
+    testRelationships = swc.GetRelationships()
+    if testRelationships != swc101Relationships {
+        t.Errorf("Encountered invalid description for SWC-101. Expected:\n%s \n...but got:\n%s\n", swc101Relationships, testRelationships)
+    }
+    testDescription = swc.GetDescription()
+    if testDescription != swc101Description {
+        t.Errorf("Encountered invalid description for SWC-101. Expected:\n%s \n...but got:\n%s\n", swc101Description, testDescription)
+    }
+    testRemediation = swc.GetRemediation()
+    if testRemediation != swc101Remediation {
+        t.Errorf("Encountered invalid description for SWC-101. Expected:\n%s \n...but got:\n%s\n", swc101Remediation, testRemediation)
+    }
+
     // try to get an SWC entry (w/ online update) with some HTTP error
     oldGithubURL := DefaultGithubURL
     DefaultGithubURL = "https://invalid"

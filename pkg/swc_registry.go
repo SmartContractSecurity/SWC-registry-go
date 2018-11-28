@@ -53,52 +53,55 @@ func GetRegistry() *Registry {
 
 // GetSWC returns an SWC entry based on the given SWC ID. If update=true, the most recent SWC file is fetched from the URL at DefaultGithubURL.
 func GetSWC(swcID string, update ...bool) (SWC, error) {
-    var updateDB bool
-    if len(update) >= 1 {
-        updateDB = update[0]
-    } else {
-        // by default don't update the DB
-        updateDB = false
-    }
-    var swc SWC
-    r := GetRegistry()
-    if updateDB {
-        err := r.UpdateRegistryFromURL()
-        if err != nil {
-            return swc, err
-        }
-    }
-    swc, present := r.data[swcID]
-    if !present {
-        return swc, errors.New("No SWC found matching the given ID")
-    }
+	var updateDB bool
+	if len(update) >= 1 {
+		updateDB = update[0]
+	} else {
+		// by default don't update the DB
+		updateDB = false
+	}
+	var swc SWC
+	r := GetRegistry()
+	if len(r.data) == 0 {
+		r.UpdateRegistryFromURL()
+	}
+	if updateDB {
+		err := r.UpdateRegistryFromURL()
+		if err != nil {
+			return swc, err
+		}
+	}
+	swc, present := r.data[swcID]
+	if !present {
+		return swc, errors.New("No SWC found matching the given ID")
+	}
 
-    return swc, nil
+	return swc, nil
 }
 
 // GetTitle returns the SWC title.
 func (s *SWC) GetTitle() string {
-    return s.Description.Content.Title
+	return s.Description.Content.Title
 }
 
 // GetRemediation returns the SWC's remediation text.
 func (s *SWC) GetRemediation() string {
-    return s.Description.Content.Remediation
+	return s.Description.Content.Remediation
 }
 
 // GetDescription returns the SWC's full-text description.
 func (s *SWC) GetDescription() string {
-    return s.Description.Content.Description
+	return s.Description.Content.Description
 }
 
 // GetRelationships returns the SWC's equivalent CWE entry formatted as a Markdown link.
 func (s *SWC) GetRelationships() string {
-    return s.Description.Content.Relationships
+	return s.Description.Content.Relationships
 }
 
 // GetMarkdown returns a summary of the SWC in Markdown formatting.
 func (s *SWC) GetMarkdown() string {
-    return s.Description.Markdown
+	return s.Description.Markdown
 }
 
 func (r *Registry) parseAndUpdate(inputBytes []byte) error {
