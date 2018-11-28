@@ -52,10 +52,17 @@ func GetRegistry() *Registry {
 }
 
 // GetSWC returns an SWC entry based on the given SWC ID. If update=true, the most recent SWC file is fetched from the URL at DefaultGithubURL.
-func GetSWC(swcID string, update bool) (SWC, error) {
+func GetSWC(swcID string, update ...bool) (SWC, error) {
+    var updateDB bool
+    if len(update) >= 1 {
+        updateDB = update[0]
+    } else {
+        // by default don't update the DB
+        updateDB = false
+    }
     var swc SWC
     r := GetRegistry()
-    if update {
+    if updateDB {
         err := r.UpdateRegistryFromURL()
         if err != nil {
             return swc, err

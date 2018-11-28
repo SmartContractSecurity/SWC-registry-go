@@ -169,7 +169,7 @@ func TestSWC(t *testing.T) {
     }
 
     // try to get an SWC with an invalid ID
-    swc, err = GetSWC("invalid", false)
+    swc, err = GetSWC("invalid")
     if err == nil {
         t.Error("Expected error for an invalid SWC ID was not thrown.")
     }
