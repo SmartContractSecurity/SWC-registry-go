@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"io/ioutil"
+	"net/http"
 	"sync"
 )
 
@@ -32,6 +33,9 @@ type Registry struct {
 	data map[string]SWC
 }
 
+// DefaultGithubURL is the default repository URL used for online-loading. It points to the SWC definition JSON.
+var DefaultGithubURL = "https://raw.githubusercontent.com/SmartContractSecurity/SWC-registry/master/export/swc-definition.json"
+
 var registryInstance *Registry
 var once sync.Once
 
@@ -44,11 +48,26 @@ func GetRegistry() *Registry {
 	return registryInstance
 }
 
+func (r *Registry) parseAndUpdate(inputBytes []byte) error {
+	var parsedRegistry map[string]Description
+	json.Unmarshal(inputBytes, &parsedRegistry)
+	if len(parsedRegistry) == 0 {
+		return errors.New("Error reading JSON file - invalid or empty")
+	}
+
+	// clear current registry and add new data
+	r.data = make(map[string]SWC)
+	for SWCId, SWCDescription := range parsedRegistry {
+		r.data[SWCId] = SWC{ID: SWCId, Description: SWCDescription}
+	}
+	return nil
+}
+
 // UpdateRegistryFromFile loads the SWC definition data from the JSON file in the package's directory.
-func (r *Registry) UpdateRegistryFromFile(path ...string) error {
+func (r *Registry) UpdateRegistryFromFile(paths ...string) error {
 	var filePath string
-	if len(path) >= 1 {
-		filePath = path[0]
+	if len(paths) >= 1 {
+		filePath = paths[0]
 	} else {
 		// use local JSON file as default
 		filePath = "swc-definition.json"
@@ -58,16 +77,32 @@ func (r *Registry) UpdateRegistryFromFile(path ...string) error {
 		return err
 	}
 
-	var parsedRegistry map[string]Description
-	json.Unmarshal(jsonBytes, &parsedRegistry)
-	if len(parsedRegistry) == 0 {
-		return errors.New("Error reading JSON file - invalid or empty")
+	err = r.parseAndUpdate(jsonBytes)
+	if err != nil {
+		return err
 	}
+	return nil
+}
 
-	// clear current registry
-	r.data = make(map[string]SWC)
-	for SWCId, SWCDescription := range parsedRegistry {
-		r.data[SWCId] = SWC{ID: SWCId, Description: SWCDescription}
+// UpdateRegistryFromURL accesses a JSON file at a remote URL and tries to update the registry with it.
+func (r *Registry) UpdateRegistryFromURL(urls ...string) error {
+	var url string
+	if len(urls) >= 1 {
+		url = urls[0]
+	} else {
+		// use the default Github repo URL
+		url = DefaultGithubURL
+	}
+	resp, err := http.Get(url)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	jsonBytes, _ := ioutil.ReadAll(resp.Body)
+	err = r.parseAndUpdate(jsonBytes)
+	if err != nil {
+		return err
 	}
 	return nil
 }
