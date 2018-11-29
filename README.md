@@ -1,6 +1,6 @@
 # The Golang SWC Registry Library
 
-This package aims to make the [Smart Contract Weakness Classification](https://smartcontractsecurity.github.io/SWC-registry/) (SWC) Registry accessible in Golang. To get an overview over the available methods, please check the Go Doc for this repo.
+This package aims to make the [Smart Contract Weakness Classification](https://smartcontractsecurity.github.io/SWC-registry/) (SWC) Registry accessible in Golang. To get an overview over the available methods, please check the Go Doc for this repo [here](https://godoc.org/github.com/SmartContractSecurity/SWC-registry-go/pkg).
 
 ## Example
 ```go
