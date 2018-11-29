@@ -1,4 +1,8 @@
 # The Golang SWC Registry Library
+[![CircleCI](https://circleci.com/gh/SmartContractSecurity/SWC-registry-go.svg?style=svg)](https://circleci.com/gh/SmartContractSecurity/SWC-registry-go)
+[![coverage](https://gocover.io/_badge/github.com/SmartContractSecurity/SWC-registry-go/pkg?0 "coverage")](http://gocover.io/github.com/SmartContractSecurity/SWC-registry-go)
+[![Go Report Card](https://goreportcard.com/badge/github.com/SmartContractSecurity/SWC-registry-go)](https://goreportcard.com/report/github.com/SmartContractSecurity/SWC-registry-go)
+[![Go Doc](http://img.shields.io/badge/godoc-reference-5272B4.svg?style=flat-square)](https://godoc.org/github.com/SmartContractSecurity/SWC-registry-go/pkg)
 
 This package aims to make the [Smart Contract Weakness Classification](https://smartcontractsecurity.github.io/SWC-registry/) (SWC) Registry accessible in Golang. To get an overview over the available methods, please check the Go Doc for this repo [here](https://godoc.org/github.com/SmartContractSecurity/SWC-registry-go/pkg).
 
